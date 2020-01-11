@@ -128,6 +128,8 @@ def game_hash()
   return resultHash
 end
 
+
+#This method will take in String player_name as an argument and return the points he scored
 def num_points_scored(player_name)
   nds = game_hash()
   player_found = false
@@ -144,10 +146,11 @@ def num_points_scored(player_name)
   end
 end
 
+#This method will take in String player_name as an argument and return the shoe-size of that player
 def shoe_size(player_name)
   nds = game_hash()
   player_found = false
-  nds.each do |home_or_away_key, home_or_away_valueHash| #home/array_Hash
+  nds.each do |home_or_away_key, home_or_away_valueHash| 
     home_or_away_valueHash[:players].each do |stats|
       if stats[:player_name] == player_name
         player_found = true
@@ -160,11 +163,14 @@ def shoe_size(player_name)
   end
 end
 
+#This method takes in a team_names as the argument and returns an array of the players numbers on that team
 def player_numbers(team_name)
   nds = game_hash()
   team_numbers = []
   nds.each do |home_or_away_key, value|
-    if value[:team_name] == team_name
+
+  #making sure that the team we are looking at matches the argument
+    if value[:team_name] == team_name 
       value[:players].each do |stat|
         team_numbers << stat[:number]
       end
@@ -173,6 +179,7 @@ def player_numbers(team_name)
   return team_numbers.sort
 end
 
+#This method just returns the team's colors
 def team_colors(team_name)
   nds = game_hash()
   nds.each do |home_or_away_key, value|
@@ -182,6 +189,7 @@ def team_colors(team_name)
   end
 end
 
+#Returns the name of the teams playing eachother as an array
 def team_names()
   nds = game_hash()
   array_of_team_names =[]
@@ -191,6 +199,7 @@ def team_names()
   return array_of_team_names
 end
 
+#returns the hash of the player stats excluding the name, since we already know who the player is due to the argument/input
 def player_stats(player_name)
   nds = game_hash
   nds.each do |home_or_away_key, value|
@@ -204,6 +213,7 @@ def player_stats(player_name)
   end
 end
 
+#This method returns the number of rebounds by the player with the biggest shoe size
 def big_shoe_rebounds()
   nds = game_hash
   biggest_shoe_size = 0
@@ -214,9 +224,11 @@ def big_shoe_rebounds()
       end
     end
   end
-
+  #Now that we have the max shoe size we iterate through the players again to get a matching name and find out that player's rebounds stat
   nds.each do |home_or_away_key, value|
     value[:players].each do |stat|
+
+    #if the current players shoe-size is equal to max shoe-size return this player's rebounds
       if stat[:shoe] == biggest_shoe_size
         return stat[:rebounds]
       end
@@ -224,6 +236,7 @@ def big_shoe_rebounds()
   end
 end
 
+#This method returns the player who scored the most
 def most_points_scored()
   nds = game_hash
   most_points = 0
@@ -244,6 +257,7 @@ def most_points_scored()
   end
 end
 
+#The function of this method is self-explanatory
 def winning_team()
   nds = game_hash
   home_team_points = 0
@@ -272,7 +286,8 @@ def winning_team()
   end
 end
 
-def player_with_longest_name
+#This method is also self-explanatory
+def player_with_longest_name()
   nds = game_hash()
   longest_char_length = 0
   nds.each do |home_or_away_key, value|
@@ -291,6 +306,7 @@ def player_with_longest_name
   end  
 end
 
+#This method will return a boolean, whether or not the player with the largest name also has the most steals in the game
 def long_name_steals_a_ton?()
   nds = game_hash()
   longest_name = player_with_longest_name()
