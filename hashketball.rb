@@ -68,7 +68,7 @@ def game_hash()
    :colors => ["Turquoise", "Purple"],
    :players => [
      {
-       :player_name => "Jeff Adrien", #hash[:home][:players][0]
+      :player_name => "Jeff Adrien", #hash[:home][:players][0]
       :number => 4,
       :shoe => 18,
       :points => 10,
@@ -128,201 +128,236 @@ def game_hash()
   return resultHash
 end
 
+=begin
 
-#This method will take in String player_name as an argument and return the points he scored
-def num_points_scored(player_name)
-  nds = game_hash()
-  player_found = false
-  nds.each do |home_or_away_key, home_or_away_valueHash| #home/array_Hash
-    home_or_away_valueHash[:players].each do |stats|
-      if stats[:player_name] == player_name
-        player_found = true
-        return stats[:points]
-      end
-    end
-  end
-  if player_found == false
-    p "we cannot find #{player_name} try again."
-  end
-end
+In the methods below, the data_set.each needs TWO BLOCK PARAMETERS
+Because when we use .each on the initial NDS, it will only give the KEYS but not the VALUES
+associated with the two main keys provided (Home and Away)... by adding a 2nd parameter,
+we have access to the values of those keys.
 
-#This method will take in String player_name as an argument and return the shoe-size of that player
-def shoe_size(player_name)
-  nds = game_hash()
-  player_found = false
-  nds.each do |home_or_away_key, home_or_away_valueHash| 
-    home_or_away_valueHash[:players].each do |stats|
-      if stats[:player_name] == player_name
-        player_found = true
-        return stats[:shoe]
-      end
-    end
-  end
-  if player_found == false
-    p "we cannot find #{player_name} try again."
-  end
-end
-
-#This method takes in a team_names as the argument and returns an array of the players numbers on that team
-def player_numbers(team_name)
-  nds = game_hash()
-  team_numbers = []
-  nds.each do |home_or_away_key, value|
-
-  #making sure that the team we are looking at matches the argument
-    if value[:team_name] == team_name 
-      value[:players].each do |stat|
-        team_numbers << stat[:number]
-      end
-    end
-  end
-  return team_numbers.sort
-end
-
-#This method just returns the team's colors
-def team_colors(team_name)
-  nds = game_hash()
-  nds.each do |home_or_away_key, value|
-    if value[:team_name] == team_name
-      return value[:colors]
-    end
-  end
-end
-
-#Returns the name of the teams playing eachother as an array
-def team_names()
-  nds = game_hash()
-  array_of_team_names =[]
-  nds.each do |home_or_away_key, value|
-    array_of_team_names.push(value[:team_name])
-  end
-  return array_of_team_names
-end
-
-#returns the hash of the player stats excluding the name, since we already know who the player is due to the argument/input
-def player_stats(player_name)
-  nds = game_hash
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-      if stat[:player_name] == player_name
-        returningHash = stat
-        returningHash.delete(:player_name)
-        return returningHash
-      end
-    end
-  end
-end
-
-#This method returns the number of rebounds by the player with the biggest shoe size
-def big_shoe_rebounds()
-  nds = game_hash
-  biggest_shoe_size = 0
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-      if stat[:shoe] > biggest_shoe_size
-        biggest_shoe_size = stat[:shoe]
-      end
-    end
-  end
-  #Now that we have the max shoe size we iterate through the players again to get a matching name and find out that player's rebounds stat
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-
-    #if the current players shoe-size is equal to max shoe-size return this player's rebounds
-      if stat[:shoe] == biggest_shoe_size
-        return stat[:rebounds]
-      end
-    end
-  end
-end
-
-#This method returns the player who scored the most
-def most_points_scored()
-  nds = game_hash
-  most_points = 0
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-      if stat[:points] > most_points
-        most_points = stat[:points]
-      end
-    end
-  end
-
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-      if stat[:points] == most_points
-        return stat[:player_name]
-      end
-    end
-  end
-end
-
-#The function of this method is self-explanatory
-def winning_team()
-  nds = game_hash
-  home_team_points = 0
-  away_team_points = 0
-  home_team = ""
-  away_team = ""
-  nds.each do |home_or_away_key, value|
-    if home_or_away_key.to_s == "home"
-      home_team = value[:team_name]
-    else
-      away_team = value[:team_name]
-    end
-    value[:players].each do |stat|
-      if home_or_away_key.to_s == "home"
-        home_team_points += stat[:points]
-      else
-        away_team_points += stat[:points]
-      end
-    end 
-  end
+For example in num_points_scored() method, the line where I have:
+  data_set.each do |key, key_value|
   
-  if home_team_points > away_team_points
-    return home_team
-  else
-    return away_team
-  end
-end
+  key[:players] will give an error since key... literally represents a key thats it!
+  In this lab our key variable will only be :home & :away
 
-#This method is also self-explanatory
-def player_with_longest_name()
-  nds = game_hash()
-  longest_char_length = 0
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-      if stat[:player_name].length > longest_char_length
-        longest_char_length = stat[:player_name].length
+=end
+
+def num_points_scored(player_name)
+  player_found = false #so far we dont know if this player is actually here
+  data_set = game_hash()
+  #need to iterate through both home and away team players, because the player we are looking for can be on either team.
+  data_set.each do |key, key_value|
+    key_value[:players].each do |player_stats|
+      if player_stats[:player_name] == player_name #if the current player name matches our argument
+        player_found = true #player has been found
+        return player_stats[:points] #returns the current player's points scored
       end
     end
   end
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-      if stat[:player_name].length == longest_char_length
-        return stat[:player_name]
+  if player_found == false
+    return "#{player_name} is on neither home or away team, try again."
+  end
+end
+
+def shoe_size(player_name)
+  player_found = false #so far we dont know if this player is actually here
+  data_set = game_hash()
+  #similar to previous method, we need to iterate through both home and away team players to locate our desired player.
+  data_set.each do |key, key_value|
+    key_value[:players].each do |player_stats|
+      #if the current player name matches our input/ provided argument
+      if player_stats[:player_name] == player_name
+        player_found = true #player has been found
+        return player_stats[:shoe] #returns the current player's shoe size
+      end
+    end
+  end
+  if player_found == false
+    return "Cannot locate '#{player_name}' shoe size. Invalid name"
+  end
+
+end
+
+def team_colors(team_name)
+  team_found = false
+  data_set = game_hash()
+  data_set.each do |key, key_value| #iterates between both home and away key
+    if key_value[:team_name] == team_name
+      team_found = true
+      return key_value[:colors] #returns team_color array
+    end
+  end
+  if team_found == false
+    return "Invalid team name... try again"
+  end
+end
+
+#Goal is to return an array of the two teams playing (home & away team)
+def team_names
+  data_set = game_hash()
+  newArr = []
+  data_set.each do |key, key_value|
+    newArr << key_value[:team_name] #pushing the team name into array
+  end
+  return newArr #explicit return of newArr
+end
+
+#Goal of this method is to return an array of player jersey numbers on that team.
+def player_numbers(team_name)
+  newArr = [] #we will return this
+  data_set = game_hash()
+  data_set.each do |key, key_value| 
+    if team_name == key_value[:team_name]
+      key_value[:players].each do |player_stat|  #iterates to all players on specific team
+        newArr << player_stat[:number]      #adding numbers to newArr
+      end
+    end
+  end
+  return newArr.sort
+end
+
+#Goal of this method is to return player_stat hash without player_name key-value pair
+def player_stats(player_name)
+  data_set = game_hash()
+  data_set.each do |key, key_value|
+    key_value[:players].each do |player_stat|
+      if player_stat[:player_name] == player_name
+        player_stat.delete(:player_name)
+        return player_stat #Should return hash excluding player_name key
+      end
+    end
+  end
+end
+
+#When first doing this lab, I iterated through both teams twice to first find the
+#biggest shoe-size, then went back again to find the matching player stats 
+
+#In this second run through I figured another way by first getting the total number of players playing... and then set it up so that if the max player count is reached, I can just return the current maximum shoe-sized player's rebounds... 
+#I could simply set the total_number of players to 10, but that is not scalable so I set it by the sum of the lengths of players on both teams.
+def big_shoe_rebounds
+  data_set = game_hash()
+  total_num_players = data_set[:home][:players].length + data_set[:away][:players].length
+  count = 0
+  max_shoe_size = 0
+  largest_shoe_rebounds = 0
+  data_set.each do |key, key_value|
+    key_value[:players].each do |player_stat|
+      count += 1
+      if player_stat[:shoe] > max_shoe_size
+        max_shoe_size = player_stat[:shoe]
+        largest_shoe_rebounds = player_stat[:rebounds]
+      end
+      if count == total_num_players
+        return largest_shoe_rebounds #remember returning max rebound for biggest shoe.
+      end
+      # I made two if statements because I think these two 
+      # conditional statements are independent of eachother, I could be wrong.
+    end
+  end
+end
+
+# Comparing big_shoe_rebounds and most_points_scored...
+#This method below is the scenario where I iterate through the data structure again...
+#which I think is worst for scalability. The below method could be solved using the approach
+#involved with big_shoe_rebounds method
+def most_points_scored
+  most_points = 0
+  data_set = game_hash()
+  data_set.each do |key, key_value|
+    key_value[:players].each do |player_stat|
+      if player_stat[:points] > most_points
+        most_points = player_stat[:points]
+      end
+    end
+  end
+  data_set.each do |key, key_value|
+    key_value[:players].each do |player_stat|
+      if player_stat[:points] == most_points
+        return player_stat[:player_name]
       end
     end
   end  
 end
 
-#This method will return a boolean, whether or not the player with the largest name also has the most steals in the game
-def long_name_steals_a_ton?()
-  nds = game_hash()
-  longest_name = player_with_longest_name()
-  most_steals = 0
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-      if stat[:steals] > most_steals
-        most_steals = stat[:steals]
+def winning_team
+  #need to declare these out here so I can access and return them later.
+  home_team_score = 0  
+  away_team_score = 0
+  home_team_name = ""
+  away_team_name = ""
+  data_set = game_hash()
+  data_set.each do |key, key_value|
+    #if and else will only be reached once.
+    if key.to_s == "home"
+      home_team_name += key_value[:team_name]
+      key_value[:players].each do |player_stat|
+        home_team_score += player_stat[:points]
+      end
+    else
+      away_team_name += key_value[:team_name]
+      key_value[:players].each do |player_stat|
+        away_team_score += player_stat[:points]
       end
     end
   end
 
-  nds.each do |home_or_away_key, value|
-    value[:players].each do |stat|
-      if ((stat[:steals] == most_steals) && (stat[:player_name] == longest_name))
-        return true
+  #Below is why I declared the 4 variables in beginning of method.
+  if home_team_score > away_team_score
+    return home_team_name
+  else
+    return away_team_name
+  end
+end
+
+#Method below has similar approach to big_shoe_method... iterate through hash once.
+def player_with_longest_name
+  data_set = game_hash()
+  total_num_players = data_set[:home][:players].length + data_set[:away][:players].length
+  name_of_player = "" #this is what we are returning
+  longest_name = 0
+  count = 0
+  data_set.each do |key, key_value|
+    key_value[:players].each do |player_stat|
+      count += 1
+      if player_stat[:player_name].length > longest_name
+        longest_name = player_stat[:player_name].length
+        # "string".replace() replaces current string with whatever is placed in the argument. 
+        name_of_player.replace(player_stat[:player_name]) 
+      end
+      if count == total_num_players
+        return name_of_player #returning longest_name
+      end
+    end
+  end  
+end
+
+def long_name_steals_a_ton?()
+  data_set = game_hash()
+  total_num_players = data_set[:home][:players].length + data_set[:away][:players].length
+  answer = false
+  count = 0
+  longest_name_length = 0
+  name_w_most_steals = ""
+  name_w_longest_len = ""
+  most_steals = 0
+  data_set.each do |key, key_value|
+    key_value[:players].each do |p_stat|
+      count += 1
+      if p_stat[:steals] > most_steals
+        most_steals = p_stat[:steals]
+        name_w_most_steals.replace(p_stat[:player_name])
+      end
+      if p_stat[:player_name].length > longest_name_length
+        longest_name_length = p_stat[:player_name].length
+        name_w_longest_len.replace(p_stat[:player_name]) 
+      end
+      if count == total_num_players
+        if name_w_most_steals == name_w_longest_len
+          return true
+        else
+          return false
+        end
       end
     end
   end
