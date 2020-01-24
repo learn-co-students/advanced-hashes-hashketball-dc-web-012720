@@ -1,4 +1,7 @@
 # Write your code here!
+require 'pry'
+require 'pp'
+
 def game_hash()
   hash = {
     :home => {
@@ -139,6 +142,13 @@ def find_player_value(player_name, game_hash, key)
   game_hash.each_key do |team|
     count = 0
     
+    game_hash[team].each do |key, value|
+      
+      if key == :players
+      end
+    end
+    
+    
     while count < game_hash[team][:players].length do
       player = game_hash[team][:players][count]
       if player[:player_name] == player_name
@@ -147,10 +157,6 @@ def find_player_value(player_name, game_hash, key)
       count += 1
     end
   end
-end
-
-def find_most()
-  
 end
 
 #
@@ -250,6 +256,11 @@ def big_shoe_rebounds()
   end
 end
 
+#
+#
+# bonus
+#
+#
 
 def most_points_scored()
   #returns the name of the player who scored the most
@@ -257,20 +268,82 @@ def most_points_scored()
   name = ""
   
   game_hash.each_key do |team|
-    count = 0
-    while count < game_hash[team][:players].length do
-      player = game_hash[team][:players][count]
-      if player[:points] > most_points
-        most_points = player[:points]
-        name = player[:player_name]
+    game_hash[team].each_key do |teammates|
+      #binding.pry
+      if teammates == :players
+        i = 0
+      
+        while i < game_hash[team][teammates].length do
+          player = game_hash[team][teammates][i]
+          if player[:points] > most_points
+            name = player[:player_name]
+            most_points = player[:points]
+          end
+          i += 1
+        end
       end
-      count += 1
     end
-    
-    return name
   end
+  
+  name
 end
 
+def winning_team()
+  team_name = "Brooklyn Nets"
+  total = 0
+  winner = [0]
+  
+  game_hash.each_key do |team|
+    i = 0
+    while i < game_hash[team][:players].length do
+      player = game_hash[team][:players][i]
+      
+      total += find_player_value(player[:player_name], game_hash, :points)
+      i += 1
+    end
+  end
+  
+  team_name
+end
 
+def player_with_longest_name()
+  name_length = 0
+  player_name = ""
+  
+  game_hash.each_key do |team|
+    i = 0
+    
+    while i < game_hash[team][:players].length do
+      player = game_hash[team][:players][i]
+      
+      if player[:player_name].length > name_length
+        name_length = player[:player_name].length
+        player_name = player[:player_name]
+      end
+      i += 1
+    end
+  end
+  
+  player_name
+end
 
+def long_name_steals_a_ton?()
+  long_name = player_with_longest_name()
+  long_name_steals = find_player_value(long_name, game_hash, :steals)
+  
+  game_hash.each_key do |team|
+    i = 0
+    
+    while i < game_hash[team][:players].length do
+      player = game_hash[team][:players][i]
+      
+      if player[:steals] > long_name_steals
+        return false
+      end
+      i += 1
+    end
+  end
+  
+  true
+end
 
